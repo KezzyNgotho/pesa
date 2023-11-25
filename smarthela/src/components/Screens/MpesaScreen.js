@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import firebase from '../firebase';
+
+// ... (imports)
 
 const MpesaScreen = () => {
   const [isMyNumber, setIsMyNumber] = useState(true);
@@ -12,15 +14,13 @@ const MpesaScreen = () => {
   const [currency, setCurrency] = useState('');
   const [reason, setReason] = useState('');
   const [userPhoneNumber, setUserPhoneNumber] = useState('');
-  const [checkingBalance, setCheckingBalance] = useState(0); // Initialize with 0
   const [userAccounts, setUserAccounts] = useState([]);
 
   useEffect(() => {
-    // Fetch user's accounts from Firebase
+    // Fetch user's accounts and phone number from Firebase
     const userId = firebase.auth().currentUser.uid;
     const db = firebase.firestore();
 
-    // Fetch the user's phone number
     db.collection('users')
       .doc(userId)
       .get()
@@ -35,6 +35,13 @@ const MpesaScreen = () => {
           } else {
             console.error('User data does not contain "phone".');
           }
+
+          if (userData && userData.accountNumber) {
+            const accountNumber = userData.accountNumber;
+            setUserAccounts((prevState) => [...prevState, { value: accountNumber, label: 'Account Number' }]);
+          } else {
+            console.error('User data does not contain "accountNumber".');
+          }
         } else {
           console.error('User document does not exist.');
         }
@@ -42,100 +49,62 @@ const MpesaScreen = () => {
       .catch((error) => {
         console.error('Error fetching user data:', error);
       });
-
-    // Check if the user has a checking account and fetch the balance
-    db.collection('accountOverview')
-      .where('accountType', '==', 'checking')
-      .where('userId', '==', userId)
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          // There should be only one matching document
-          const doc = querySnapshot.docs[0];
-          const checkingAccount = doc.data();
-          const checkingBalance = checkingAccount.balance;
-          setCheckingBalance(checkingBalance);
-        } else {
-          console.error('User does not have a checking account.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching checking account balance:', error);
-      });
-
- // Fetch user's account number
-  // Fetch user's account number
-  db.collection('users')
-  .doc(userId)
-  .get()
-  .then((doc) => {
-    if (doc.exists) {
-      const userData = doc.data();
-
-      if (userData && userData.accountNumber) {
-        const accountNumber = userData.accountNumber;
-        setUserAccounts((prevState) => [...prevState, { value: accountNumber, label: 'Account Number' }]);
-      } else {
-        console.error('User data does not contain "accountNumber".');
-      }
-    } else {
-      console.error('User document does not exist.');
-    }
-  })
-  .catch((error) => {
-    console.error('Error fetching user data:', error);
-  });
-
-
   }, []);
-  const handleTransfer = () => {
+
+  const handleTransfer = async () => {
     const transferAmount = parseFloat(amount);
   
     if (isNaN(transferAmount) || transferAmount <= 0) {
-      console.error('Invalid transfer amount.');
+      Alert.alert('Invalid Amount', 'Please enter a valid transfer amount.');
       return;
     }
   
-    // Fetch the current checking account balance from the "totals" collection
     const userId = firebase.auth().currentUser.uid;
     const db = firebase.firestore();
-    const checkingAccountRef = db.collection('totals').doc('checking'); // Assuming 'checking' is the document ID for the checking account
+    const checkingAccountRef = db.collection('totals').doc('checking');
   
-    db.runTransaction(async (transaction) => {
-      const checkingAccountDoc = await transaction.get(checkingAccountRef);
-      if (!checkingAccountDoc.exists) {
-        console.error("Checking account document not found in totals collection.");
-        return;
-      }
-      const checkingAccountData = checkingAccountDoc.data();
-      const currentBalance = checkingAccountData.amount;
-      if (transferAmount > currentBalance) {
-        console.error('Transfer amount exceeds available balance.');
-        return;
-      }
-      // Calculate the new balance after the transfer
-      const newCheckingBalance = currentBalance - transferAmount;
-      // Update the checking account balance in the "totals" collection
-      transaction.update(checkingAccountRef, { amount: newCheckingBalance });
-      // Record the transaction in the 'transactions' collection
-      const transactionData = {
-        userId,
-        recipientNumber,
-        amount: transferAmount,
-        currency,
-        reason,
-        accountType: 'checking',
-        type: 'transfer',
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      };
-      const transactionsCollectionRef = db.collection('transactions');
-      transaction.set(transactionsCollectionRef.doc(), transactionData);
-      console.log('Transfer completed.');
-    }).catch((error) => {
+    try {
+      await db.runTransaction(async (transaction) => {
+        const checkingAccountDoc = await transaction.get(checkingAccountRef);
+        if (!checkingAccountDoc.exists) {
+          Alert.alert('Error', 'Checking account document not found in totals collection.');
+          return;
+        }
+  
+        const checkingAccountData = checkingAccountDoc.data();
+        const currentBalance = checkingAccountData.amount;
+  
+        if (transferAmount > currentBalance) {
+          Alert.alert('Insufficient Balance', 'Transfer amount exceeds available balance.');
+          return;
+        }
+  
+        // ...
+  
+        setTimeout(() => {
+          Alert.alert('Success', 'Transfer completed successfully.', [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Clear the form fields after success
+                setRecipientNumber('');
+                setSelectedAccount('');
+                setAmount('');
+                setCurrency('');
+                setReason('');
+              },
+            },
+          ]);
+        }, 0); // Delayed to allow state updates to complete
+      });
+    } catch (error) {
       console.error('Error during transaction:', error);
-    });
+      Alert.alert('Error', 'An error occurred during the transaction.');
+    }
   };
   
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>M-Pesa Transfer</Text>

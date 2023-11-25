@@ -76,7 +76,7 @@ const BillsScreen = () => {
       </View>
       <Section title="Buy Goods and Services">
         <Module title="Zuri Till" icon={require('../assets/Cardless.png')} onPress={() => navigateToScreen('ZuriTill')} />
-        <Module title="Airtime & Data" icon={require('../assets/Airtime.jpeg')} onPress={() => navigateToScreen('Airtime')} />
+        <Module title="Airtime & Data" icon={require('../assets/Airtime.jpeg')} onPress={() => navigateToScreen('Recharge')} />
         <Module title="M-Pesa Till" icon={require('../assets/icons8-mpesa-48.png')} />
         <Module title="M-Pesa Paybill" icon={require('../assets/icons8-mpesa-48.png')} />
       </Section>

@@ -18,6 +18,7 @@ import CustomerSupportScreen from "../Screens/CustomerSupportScreen";
 import MpesaScreen from "../Screens/MpesaScreen";
 import MoneyTransferScreen from "../Screens/MoneyTransferScreen";
 import DepositScreen from "../Screens/DepositScreen";
+import RechargeScreen from "../Screens/RegarcheScreen";
 const Stack = createNativeStackNavigator();
 
 const MainStackNavigator = () => {
@@ -42,6 +43,7 @@ const MainStackNavigator = () => {
       <Stack.Screen options={{ headerShown: false }} name="ZuriTill" component={ZuriTillScreen} />
     <Stack.Screen options={{ headerShown: false }} name="Mpesa" component={MpesaScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Airtel" component={airtelScreen} />
+      <Stack.Screen options={{ headerShown: false }} name="Recharge" component={RechargeScreen} />
     </Stack.Navigator>
   );
 }
