@@ -118,7 +118,7 @@ color:'black'
     padding: 16,
   },
   sectionContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 16,
@@ -132,17 +132,17 @@ color:'black'
     justifyContent: 'space-between',
   },
   moduleCard: {
-    width: '47%',
-    height: 86,
+    width: '49%',
+    height: 80,
     marginBottom: 20,
     elevation: 0,
-    borderRadius: 5,
+    borderRadius: 2,
     backgroundColor: 'white',
   },
   
   moduleImage: {
-    width: 50,
-    height: 40,
+    width: 40,
+    height: 30,
     alignSelf: 'center',
   },
   moduleTitle: {

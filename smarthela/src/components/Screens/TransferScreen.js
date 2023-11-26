@@ -20,47 +20,40 @@ const TransferScreen = () => {
   const [checkingBalance, setCheckingBalance] = useState(0);
   const [savingsBalance, setSavingsBalance] = useState(0);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     const userId = firebase.auth().currentUser.uid;
     const db = firebase.firestore();
-
-    setLoading(true);
-
+  
     // Fetch checking account balance
-    db.collection('totals')
+    const unsubscribeChecking = db.collection('totals')
       .doc('checking')
-      .get()
-      .then((doc) => {
+      .onSnapshot((doc) => {
         if (doc.exists) {
           const checkingAccountData = doc.data();
           setCheckingBalance(checkingAccountData.amount || 0);
         } else {
           console.error('Checking account document does not exist.');
         }
-      })
-      .catch((error) => {
-        console.error('Error fetching checking account balance:', error);
-      })
-      .finally(() => setLoading(false));
-
+      });
+  
     // Fetch savings account balance
-    db.collection('totals')
+    const unsubscribeSavings = db.collection('totals')
       .doc('savings')
-      .get()
-      .then((doc) => {
+      .onSnapshot((doc) => {
         if (doc.exists) {
           const savingsAccountData = doc.data();
           setSavingsBalance(savingsAccountData.amount || 0);
         } else {
           console.error('Savings account document does not exist.');
         }
-      })
-      .catch((error) => {
-        console.error('Error fetching savings account balance:', error);
-      })
-      .finally(() => setLoading(false));
+      });
+  
+    return () => {
+      unsubscribeChecking();
+      unsubscribeSavings();
+    };
   }, []);
+  
 
   const handleTransfer = async () => {
     const transferAmount = parseFloat(amount);
@@ -144,7 +137,11 @@ const TransferScreen = () => {
               </View>
             </View>
             <Text style={styles.balanceLabel}>
-              Balance: ${isFromChecking ? checkingBalance.toFixed(2) : savingsBalance.toFixed(2)}
+              Balance: Ksh
+              
+              
+              
+              {isFromChecking ? checkingBalance.toFixed(2) : savingsBalance.toFixed(2)}
             </Text>
             <PaperInput
               style={styles.input}
