@@ -325,7 +325,7 @@ const toggleBalanceVisibility = (index) => {
     {/* Row 2 */}
     <View style={styles.row}>
       {/* International Transfer */}
-      <TouchableOpacity
+     {/*  <TouchableOpacity
         style={styles.serviceItem}
         onPress={() => {
           // Handle International Transfer service action here
@@ -333,40 +333,44 @@ const toggleBalanceVisibility = (index) => {
         <Image source={require('../assets/international.jpg')} style={styles.serviceIcon} />
         <Text style={styles.serviceText}>International Transfer</Text>
       </TouchableOpacity>
-
+ */}
       {/* Transfer to Other Account */}
       <TouchableOpacity
         style={styles.serviceItem}
-        onPress={() => {
-          // Handle Transfer to Other Account service action here
-        }}>
-        <Image source={require('../assets/imagesyu.png')} style={styles.serviceIcon} />
+        onPress={() => navigation.navigate('Transfer')}>
+         <Image source={require('../assets/imagesyu.png')} style={styles.serviceIcon} />
         <Text style={styles.serviceText}>To my Account</Text>
       </TouchableOpacity>
+      
 
       {/* Placeholder for the third item in Row 2 */}
       <TouchableOpacity
         style={styles.serviceItem}
-        onPress={() => {
-          // Handle Transfer to Other Account service action here
-        }}>
+        onPress={() => navigation.navigate('Support')}>
         <Image source={require('../assets/otheraccount.png')} style={styles.serviceIcon} />
         <Text style={styles.serviceText}>To Other Account</Text>
       </TouchableOpacity>
-      </View>
-  {/*     <View style={styles.placeholder}></View>
-      */} 
-    </View>
-     {/* Row 3 */}
-     <View style={styles.row}>
-      {/* Pesalink */}
+
       <TouchableOpacity
         style={styles.serviceItem}
         onPress={() => navigation.navigate('Support')}>
         <Image source={require('../assets/icons8-support-40.png')} style={styles.serviceIcon} />
         <Text style={styles.serviceText}>Support</Text>
       </TouchableOpacity>
+      </View>
+  {/*     <View style={styles.placeholder}></View>
+      */} 
     </View>
+     {/* Row 3 */}
+    {/*  <View style={styles.row}>
+      
+      <TouchableOpacity
+        style={styles.serviceItem}
+        onPress={() => navigation.navigate('Support')}>
+        <Image source={require('../assets/icons8-support-40.png')} style={styles.serviceIcon} />
+        <Text style={styles.serviceText}>Support</Text>
+      </TouchableOpacity>
+    </View> */}
 
  
 </Card>

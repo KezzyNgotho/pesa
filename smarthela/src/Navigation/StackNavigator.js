@@ -19,6 +19,7 @@ import MpesaScreen from "../Screens/MpesaScreen";
 import MoneyTransferScreen from "../Screens/MoneyTransferScreen";
 import DepositScreen from "../Screens/DepositScreen";
 import RechargeScreen from "../components/Screens/RegarcheScreen";
+import TransferScreen from "../Screens/TransferScreen";
 const Stack = createNativeStackNavigator();
 
 const MainStackNavigator = () => {
@@ -44,7 +45,8 @@ const MainStackNavigator = () => {
     <Stack.Screen options={{ headerShown: false }} name="Mpesa" component={MpesaScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Airtel" component={airtelScreen} />
       <Stack.Screen options={{ headerShown: false }} name="Recharge" component={RechargeScreen} />
-   
+      <Stack.Screen options={{ headerShown: false }} name="Transfer" component={RechargeScreen} />
+    
     </Stack.Navigator>
   );
 }
